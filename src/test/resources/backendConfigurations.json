@@ -1,0 +1,60 @@
+{
+    "native-postgres": {
+        "dbmsName": "PostgreSQL",
+        "backends": [
+            {
+                "type": "io.sqp.postgresql.PostgreSQLBackend",
+                "config": {
+                    "host": "localhost",
+                    "port": 5432,
+                    "serverCountry" : "de",
+                    "serverLanguage" : "de",
+                    "username": "proxyuser",
+                    "password": "proxypw"
+                }
+            }
+        ]
+    },
+    "native-transbase": {
+        "dbmsName": "Transbase",
+        "backends": [
+            {
+                "type": "io.sqp.transbase.TransbaseBackend",
+                "config": {
+                    "host": "localhost",
+                    "kernelPort": 2024,
+                    "username": "tbadmin",
+                    "password": ""
+                }
+            }
+        ]
+    },
+    "jdbc-postgres": {
+        "dbmsName": "PostgreSQL",
+        "backends": [
+            {
+                "type": "io.sqp.backend.jdbc.JdbcBackend",
+                "config": {
+                    "jdbcDriver": "org.postgresql.Driver",
+                    "jdbcUrl": "jdbc:postgresql://localhost:5432",
+                    "username": "proxyuser",
+                    "password": "proxypw"
+                }
+            }
+        ]
+    },
+    "jdbc-transbase": {
+        "dbmsName": "Transbase",
+        "backends": [
+            {
+                "type": "io.sqp.backend.jdbc.JdbcBackend",
+                "config": {
+                    "jdbcDriver": "transbase.jdbc.Driver",
+                    "jdbcUrl": "jdbc:transbase://localhost:2024",
+                    "username": "tbadmin",
+                    "password": ""
+                }
+            }
+        ]
+    }
+}

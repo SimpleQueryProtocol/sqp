@@ -1,0 +1,64 @@
+<!--
+  ~ Copyright 2015 by Rothmeyer Consulting (http://www.rothmeyer.com/)
+  ~ Author: Stefan Burnicki <stefan.burnicki@burnicki.net>
+  ~
+  ~ This file is part of SQP.
+  ~
+  ~ SQP is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License.
+  ~
+  ~ SQP is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with SQP.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>WebSocket Test</title>
+    <link rel="stylesheet" type="text/css" href="wsclient.css">
+    <script language="javascript" type="text/javascript" src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
+    <script language="javascript" type="text/javascript" src="wsclient.js">
+  </script>
+</head>
+
+<body>
+
+<h1>Websocket Test</h1>
+URL:
+<input type="text" id="url" value="ws://localhost:8080" />
+<button id="connect">Connect</button>
+<button id="disconnect">Disconnect</button>
+
+<br />
+<br />
+
+<div id="templatecontainer">
+    <p>Templates:</p>
+    <ul id="msgtemplates">
+
+    </ul>
+</div>
+
+<div id="messagecontainer">
+    <p>Message:</p>
+<textarea id="message" cols="60" rows="7">H {
+  "database":"proxytest"
+}
+</textarea>
+    <button id="send">Send</button>
+</div>
+
+<p>Log:</p>
+<button id="clearlog">Clear Log</button>
+<div id="log"></div>
+
+
+</body>
+</html>

@@ -1,0 +1,59 @@
+.green { color: green; }
+.red { color: red; }
+.blue { color: blue; }
+
+textarea {
+    display: block;
+}
+
+#messagecontainer, #templatecontainer {
+    margin: 5px;
+}
+#templatecontainer {
+    float: right;
+    width: 40%;
+    height: 80%;
+    overflow-y: scroll;
+}
+
+#clearlog {
+    display: block;
+}
+
+#log {
+    height: 50%;
+    overflow-y:scroll;
+}
+
+#msgtemplates pre {
+float: left;
+}
+
+#msgtemplates button {
+    float: right;
+    display: block;
+    margin: 5px;
+}
+
+#msgtemplates li:after {
+    content: ".";
+    clear: both;
+    display: block;
+    visibility: hidden;
+    height: 0px;
+}
+
+#msgtemplates ul {
+    list-style: none;
+}
+
+#msgtemplates li {
+    display: block;
+    border-bottom: 1px gray solid;
+    margin: 2px;
+    margin-bottom: 10px;
+    padding: 2px;
+    padding-bottom: 10px;
+    clear: left;
+}
+

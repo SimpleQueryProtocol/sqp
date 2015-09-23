@@ -1,0 +1,150 @@
+/*
+ * Copyright 2015 by Rothmeyer Consulting (http://www.rothmeyer.com/)
+ * Author: Stefan Burnicki <stefan.burnicki@burnicki.net>
+ *
+ * This file is part of SQP.
+ *
+ * SQP is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License.
+ *
+ * SQP is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with SQP.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+buildscript {
+    repositories { jcenter() }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.1.1'
+    }
+}
+
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '1.2.1'
+    id 'idea'
+    id 'eclipse'
+    id 'application'
+}
+
+def serverVerticle = 'ServerVerticle'
+def serverConfig = 'config.json'
+def transbaseJdbc = project.hasProperty('tbjdbc') ? project.getProperty('tbjdbc') : 'libs/tbjdbc.jar'
+def includeTransbase = new File(transbaseJdbc).exists()
+
+version = '1.0'
+
+if (!JavaVersion.current().java8Compatible) {
+    throw new IllegalStateException('''A Haiku:
+                                      |  This needs Java 8,
+                                      |  You are using something else,
+                                      |  Refresh. Try again.'''.stripMargin())
+}
+
+
+repositories {
+    mavenCentral()
+    maven {
+        url = 'http://oss.sonatype.org/content/repositories/snapshots/'
+    }
+}
+
+if (includeTransbase) {
+    println 'Using ' + transbaseJdbc + ' for Transbase backend'
+} else {
+    // Otherwise exclude from source and test set
+    println 'Building without a Transbase backend'
+    sourceSets {
+        main {
+            java {
+                exclude 'transbase/**'
+            }
+        }
+        test {
+            java {
+                exclude 'transbase/**'
+            }
+        }
+    }
+}
+
+
+dependencies {
+    // platform of proxy
+    compile 'io.vertx:vertx-core:3.0.0'
+
+    // message decoding/encoding
+    compile 'com.fasterxml.jackson.core:jackson-core:2.5.3'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.5.3'
+    compile 'com.fasterxml.jackson.core:jackson-annotations:2.5.3'
+
+    // binary protocol variant
+    compile 'org.msgpack:jackson-dataformat-msgpack:0.7.0-p9'
+
+    // java websocket implementation for client
+    compile 'org.glassfish.tyrus.bundles:tyrus-standalone-client:1.11'
+
+    // for validation custom type input
+    compile 'com.github.fge:json-schema-validator:2.2.6'
+
+    // postgreSQL database backend
+    compile 'org.postgresql:postgresql:9.4-1201-jdbc41'
+
+    if (includeTransbase) {
+        compile files(transbaseJdbc)
+    }
+
+    // test frameworks
+    testCompile 'org.testng:testng:6.9.4'
+    testCompile 'org.hamcrest:hamcrest-all:1.3'
+    testCompile 'org.mockito:mockito-all:1.10.19'
+}
+
+test {
+    useTestNG {
+        parallel 'instances'
+        suites 'src/test/resources/testng-common.xml' // backend independent unit tests
+        suites 'src/test/resources/testng-native-postgres.xml' // integration tests with PostgreSQL backend
+        suites 'src/test/resources/testng-jdbc-postgres.xml' // integration tests with JDBC backend
+
+        if (includeTransbase) {
+            suites 'src/test/resources/testng-common-transbase.xml' // common Transbase related test
+            suites 'src/test/resources/testng-native-transbase.xml' // integration tests with Transbase backend
+        }
+    }
+    // always run tests
+    outputs.upToDateWhen { false }
+    testLogging.showStandardStreams = true
+    testLogging { exceptionFormat "full" }
+}
+
+jar {
+    manifest {
+        attributes 'Main-Verticle': serverVerticle
+    }
+}
+
+shadowJar {
+    classifier = 'fat'
+    manifest {
+        attributes 'Main-Class': 'io.vertx.core.Starter'
+        attributes 'Main-Verticle': serverVerticle
+    }
+    mergeServiceFiles {
+        include 'META-INF/services/io.vertx.core.spi.VerticleFactory'
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.2'
+}
+
+mainClassName = "io.vertx.core.Starter"
+run {
+    args = ["run", serverVerticle, "-conf", serverConfig]
+}
