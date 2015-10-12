@@ -1,12 +1,15 @@
 SQP - Simple Query Protocol
 ===========================
-A simple protocol to query databases. based on JSON and WebSocket. It's implemented as a Java client
+A simple protocol to query databases based on JSON and WebSocket. It's implemented as a Java client
 library and a proxy server that can be used to easily access SQL databases in a standardized manner.
 The proxy server is currently able to communicate with Transbase and PostgreSQL databases.
 
+The project started as a master thesis by Stefan Burnicki in 2015. Therefore it might not be stable
+or complete, yet.
+
 Structure
 ---------
-The project uses gradle as build system.  Consequently, the project's file structure is a typical
+The project uses gradle as build system. Consequently, the project's file structure is a typical
 gradle structure:
 
 Java code can be found in `src/main/java`, while test code can be found in `src/test/java`.
