@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Sqp : Simple Query Protocol - A WebSocket and JSON based protocol to access relational databases">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Sqp</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/SimpleQueryProtocol/sqp">View on GitHub</a>
+
+          <h1 id="project_title">Sqp</h1>
+          <h2 id="project_tagline">Simple Query Protocol - A WebSocket and JSON based protocol to access relational databases</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/SimpleQueryProtocol/sqp/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/SimpleQueryProtocol/sqp/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a id="sqp---simple-query-protocol" class="anchor" href="#sqp---simple-query-protocol" aria-hidden="true"><span class="octicon octicon-link"></span></a>SQP - Simple Query Protocol</h1>
+
+<p>A simple protocol to query databases based on JSON and WebSocket. It's implemented as a Java client
+library and a proxy server that can be used to easily access SQL databases in a standardized manner.
+The proxy server is currently able to communicate with Transbase and PostgreSQL databases.</p>
+
+<p>The project started as a master thesis by Stefan Burnicki (<a href="https://github.com/sburnicki" class="user-mention">@sburnicki</a>) in 2015. Therefore it might not be stable
+or complete, yet.</p>
+
+<h2>
+<a id="structure" class="anchor" href="#structure" aria-hidden="true"><span class="octicon octicon-link"></span></a>Structure</h2>
+
+<p>The project uses gradle as build system. Consequently, the project's file structure is a typical
+gradle structure:</p>
+
+<p>Java code can be found in <code>src/main/java</code>, while test code can be found in <code>src/test/java</code>.
+Resources are in <code>src/main/resources</code> and test resources in <code>src/test/resources</code>.
+The folder libs/ contains non-maven dependencies.</p>
+
+<p>This project consists of several main modules, namely:</p>
+
+<ul>
+<li>The core (io.sqp.core), which contains definitions for the SQP data types and messages in Java</li>
+<li>The SQP proxy server (io.sqp.proxy) that is able to understand the SQP, talk to a database
+and answer the client</li>
+<li>The backend module (io.sqp.backend) contains interfaces and some utilities to write a database
+backend for the server</li>
+<li>The PostgreSQL SQP proxy server backend (org.postgres.sqp) which enables the proxy to talk to
+PostgreSQL databases</li>
+<li>The Transbase SQP proxy server backend (io.sqp.transbase) which enables the proxy to talk to
+Transbase databases</li>
+<li>The SchemaMatcher (io.sqp.schemamatcher) which is used by the proxy to match custom JSON
+schemas to existing ones</li>
+<li>The client library (io.sqp.client) can be used to communicate with an SQP server, as the proxy
+server.</li>
+</ul>
+
+<h2>
+<a id="involved-technologies--dependencies" class="anchor" href="#involved-technologies--dependencies" aria-hidden="true"><span class="octicon octicon-link"></span></a>Involved Technologies &amp; Dependencies</h2>
+
+<p>To understand this project, you probably need to get an overview of some technologies involved in
+this project first.</p>
+
+<p>In general:</p>
+
+<ul>
+<li>
+<code>git</code> as the version control system</li>
+<li>
+<code>gradle</code> as the build system in use</li>
+<li>
+<code>Java 8</code> as main programming language</li>
+<li>unit testing</li>
+</ul>
+
+<p>For unit testing with mocks:</p>
+
+<ul>
+<li>
+<code>TestNG</code> as unit test framework</li>
+<li>
+<code>Mockito</code> as framework for mock objects</li>
+<li>
+<code>Hamcrest</code> for matchers used in test assertions</li>
+</ul>
+
+<p>For the protocol/core:</p>
+
+<ul>
+<li>
+<code>WebSocket</code> as the underlying protocol</li>
+<li>
+<code>JSON</code> as the standard serialization/message format</li>
+<li>
+<code>MsgPack</code> as the binary equivalent for serialization/messages</li>
+<li>
+<code>Jackson</code> as the serialization framework for both JSON and MsgPack used in the Java
+implementation</li>
+<li>
+<code>JSON Schema</code> for data type descriptions</li>
+</ul>
+
+<p>For the proxy:</p>
+
+<ul>
+<li>Event-loop/callback based, asynchronous (non-blocking) programming</li>
+<li>
+<code>Vert.x 3.0</code> as the event-loop and netty based server platform</li>
+<li>
+<code>JSON Schema Validator</code> as a validator input against a custom JSON Schema</li>
+</ul>
+
+<p>For the client:</p>
+
+<ul>
+<li>
+<code>JSR 356</code> specification for Java WebSocket support</li>
+<li>
+<code>Tyrus</code> as a glassfish-based reference implementation of JSR 356</li>
+<li>Java 8's <code>CompletableFuture</code>s for non-blocking, but not event-loop/callback based programming</li>
+</ul>
+
+<p>If you run the gradle build for the first time you will notice that quite a bunch of dependency
+packages are downloaded.
+Some packages are dependencies of others that get downloaded, like Netty as the basis of Vert.x.
+Other package are needed for tests only, like hamcrest, mockito, and TestNG.
+The "JSON Schema Validator" project pulls pretty much dependencies. So it's probably a good idea
+to replace this package in the future if the amount of dependencies packages need to be reduced.</p>
+
+<p>Another dependency is the "tbjdbc.jar" that is not available in a maven repository and thus does
+not get downloaded automatically. However, this package is needed for the Transbase SQP proxy
+backend.</p>
+
+<h2>
+<a id="building" class="anchor" href="#building" aria-hidden="true"><span class="octicon octicon-link"></span></a>Building</h2>
+
+<p>Make sure you have Java 8 installed and a working internet connection so dependencies can get
+downloaded. Then just execute the gradle wrapper with the build task:</p>
+
+<pre><code>./gradlew build
+</code></pre>
+
+<h2>
+<a id="transbase-backend" class="anchor" href="#transbase-backend" aria-hidden="true"><span class="octicon octicon-link"></span></a>Transbase Backend</h2>
+
+<p>The Transbase backend is only built optionally. You can either install the eligible Transbase JDBC
+driver to <code>libs/tbjdbc.jar</code> or define its location on the cmdline:</p>
+
+<pre><code>./gradlew -Ptbjdbc=/path/to/tbjdbc.jar
+</code></pre>
+
+<h2>
+<a id="ide-integration" class="anchor" href="#ide-integration" aria-hidden="true"><span class="octicon octicon-link"></span></a>IDE integration</h2>
+
+<p>The gradle plugins "eclipse" and "idea" are used to generate project files for the Eclipse or
+IntelliJ IDEA IDEs. Just run</p>
+
+<pre><code>./gradlew idea
+</code></pre>
+
+<p>or</p>
+
+<pre><code>./gradlew eclipse
+</code></pre>
+
+<p>Check out the plugin documentation for more details on this.</p>
+
+<h2>
+<a id="configuration-of-the-server" class="anchor" href="#configuration-of-the-server" aria-hidden="true"><span class="octicon octicon-link"></span></a>Configuration of the server</h2>
+
+<p>In order for the proxy to work, you need to provide a configuration. See the
+<a href="config.json">config.json</a> file for an example.
+The proxy server itself needs to be configured in a number of ways:</p>
+
+<ul>
+<li>The <code>port</code> to listen on for WebSocket connections. It's optional and the default is <code>8080</code>.</li>
+<li>The <code>path</code> to match for incoming connections. It's optional  and the default is <code>/</code>.</li>
+<li>The <code>connectionPoolSize</code>, i.e. the maximum number of concurrently open connections.
+It's optional and the default is <code>30</code>.</li>
+<li>The <code>backends</code> array which contains backend configurations.
+Currently only the first is used and the rest is ignored. This is mandatory as there are no
+defaults.</li>
+</ul>
+
+<p>A backend configuration needs to include two fields:</p>
+
+<ul>
+<li>The <code>type</code> is the full class name of the Backend implementation. E.g.
+<code>io.sqp.postgresql.PostgreSQLBackend</code>.</li>
+<li>The <code>config</code> needs to be an object whose values depend on the concrete backend.
+Common fields are server credentials of the DBMS.</li>
+</ul>
+
+<h2>
+<a id="run-the-server-from-ide" class="anchor" href="#run-the-server-from-ide" aria-hidden="true"><span class="octicon octicon-link"></span></a>Run the Server from IDE</h2>
+
+<p>You can run it directly in your IDE by creating a run configuration that uses the main class
+<code>io.vertx.core.Starter</code> and passes in the arguments <code>-config &lt;conffile&gt;.json run
+io.sqp.proxy.ServerVerticle</code>. ".json" should be the path to the proxy's configuration
+file, which is mandatory to connect to a database. For details on the configuration file, see the
+section "Proxy Configuration" below.</p>
+
+<p>To use a specific Transbase JDBC driver, you might define it just like stated for the building process.</p>
+
+<h2>
+<a id="creating-and-using-a-fat-jar" class="anchor" href="#creating-and-using-a-fat-jar" aria-hidden="true"><span class="octicon octicon-link"></span></a>Creating and using a fat jar</h2>
+
+<p>The build.gradle uses the Gradle shadowJar plugin to assemble the application and all it's
+dependencies into a single "fat" jar.
+To build the "fat jar", run</p>
+
+<pre><code>./gradlew shadowJar
+</code></pre>
+
+<p>To run the fat jar, run</p>
+
+<pre><code>java -jar build/libs/sqp-1.0-fat.jar -conf config.json
+</code></pre>
+
+<p>(You can take that jar and run it anywhere there is a Java 8+ JDK. It contains <em>all</em> the
+dependencies it needs so you don't need to install Vert.x or any other libraries on the target
+machine).</p>
+
+<h2>
+<a id="scaling-the-server" class="anchor" href="#scaling-the-server" aria-hidden="true"><span class="octicon octicon-link"></span></a>Scaling the server</h2>
+
+<p>The server is implemented as a Vert.x verticle, which allows easy scaling of the server.
+E.g. let's say you have 8 cores on your server and you want to utilise them all, you can deploy 8
+instances as follows:</p>
+
+<pre><code>java -jar build/libs/sqp-1.0-fat.jar -conf config.json -instances 8
+</code></pre>
+
+<p>You can also enable clustering and ha at the command line, e.g.</p>
+
+<pre><code>java -jar build/libs/sqp-1.0-fat.jar -conf config.json -cluster
+java -jar build/libs/sqp-1.0-fat.jar -conf config.json -ha
+</code></pre>
+
+<p>Please see the Vert.x docs for a full list of Vert.x command line options.</p>
+
+<h2>
+<a id="running-the-tests" class="anchor" href="#running-the-tests" aria-hidden="true"><span class="octicon octicon-link"></span></a>Running the tests</h2>
+
+<p>To run the tests you need to care about some prerequisites:</p>
+
+<ol>
+<li>Install and start a PostgreSQL server.</li>
+<li>Set up a PostgreSQL user called <code>proxyuser</code> with password <code>proxypw</code>.
+If you want to use another user, you need to modify the
+<a href="src/test/resources/backendConfiguration.json">test configuration</a> and the
+<a href="config.json">run configuration</a> accordingly.</li>
+<li>Create a <code>proxytest</code> PostgreSQL database.</li>
+<li>Install and start a Transbase server.</li>
+<li>Create a <code>proxytest</code> Transbase database.</li>
+<li>For both Transbase and PostgreSQL: Create tables with statements that can be found in
+<code>src/test/resources/*Table.sql</code>.</li>
+<li>Run the tests by executing
+        ./gradlew test
+The test results can be seen on the console or as a HTML summary at
+<code>build/reports/tests/index.html</code>.</li>
+</ol>
+
+<p>If you want to exclude a backend from the tests, you need to comment out the backend related
+sections in the <a href="src/test/resources/testng-common.xml">common test configuration</a> and exclude the
+backend-falvored tests from being run in the <a href="build.gradle">build.gradle</a> file.
+In the console output you might see backtraces and logs. This does not mean that tests failed, as
+some of them tests correct behavior on failure.</p>
+
+<h2>
+<a id="running-the-server-with-transbase-free" class="anchor" href="#running-the-server-with-transbase-free" aria-hidden="true"><span class="octicon octicon-link"></span></a>Running the Server with Transbase Free</h2>
+
+<p>Transbase has a free edition that can be used with SQP. To do so, install it at a specific location
+and copy the eligible Transbase JDBC driver to that location.
+You need to then build and run the server by explicitly defining the location of the <code>tbjdbc.jar</code> in the
+installation location of Transbase Free.
+You can also try to define the location of the Transbase Free installation by setting the Java property
+<code>LINKED_IN_PATH</code>. Then you don't need to explicitly copy and define the location of <code>tbjdbc.jar</code>.</p>
+
+<p>The backend configuration must then set <code>"pipe": true</code> instead of a host and port.
+The integration tests currently do not work with Transbase Free.</p>
+
+<p>Due to some limitations of Transbase Free, the integration tests currently fail with it.</p>
+
+<h2>
+<a id="further-documentation" class="anchor" href="#further-documentation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Further Documentation</h2>
+
+<p>You can build and read the Javadoc documentation by executing the <code>javadoc</code> gradle task:</p>
+
+<pre><code>./gradlew javadoc
+</code></pre>
+
+<p>The documentation can then be found in <code>build/docs</code>.</p>
+
+<h2>
+<a id="license" class="anchor" href="#license" aria-hidden="true"><span class="octicon octicon-link"></span></a>License</h2>
+
+<p>SQP uses "dual licensing". Under this model, developers can freely choose to use SQP under the free
+software/Open Source GNU Affero General Public License Version 3 (commonly known as the "AGPLv3")
+or under a commercial license.</p>
+
+<p>A copy of AGPLv3 can be found in the <a href="LICENSE">license file</a>.
+For a commercial license, please contact Rothmeyer Consulting (see below).</p>
+
+<h2>
+<a id="contact" class="anchor" href="#contact" aria-hidden="true"><span class="octicon octicon-link"></span></a>Contact</h2>
+
+<p>Copyright Holder: <a href="http://www.rothmeyer.com/">Rothmeyer Consulting</a></p>
+
+<p>Author: Stefan Burnicki <a href="mailto:stefan.burnicki@burnicki.net">stefan.burnicki@burnicki.net</a> (<a href="https://github.com/sburnicki" class="user-mention">@sburnicki</a>)</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Sqp maintained by <a href="https://github.com/SimpleQueryProtocol">SimpleQueryProtocol</a></p>
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
