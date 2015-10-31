@@ -4,8 +4,8 @@ A simple protocol to query databases based on JSON and WebSocket. It's implement
 library and a proxy server that can be used to easily access SQL databases in a standardized manner.
 The proxy server is currently able to communicate with Transbase and PostgreSQL databases.
 
-The project started as a master thesis by Stefan Burnicki in 2015. Therefore it might not be stable
-or complete, yet.
+The project started as a [master thesis](Design_of_a_Portable_SQL_Wire_Protocol.pdf) by Stefan
+Burnicki in 2015. Therefore it might not be stable or complete, yet.
 
 Structure
 ---------
@@ -206,6 +206,8 @@ Due to some limitations of Transbase Free, the integration tests currently fail 
 
 Further Documentation
 ---------------------
+The ideas behind the project are explained in the [master thesis](Design_of_a_Portable_SQL_Wire_Protocol.pdf).
+
 You can build and read the Javadoc documentation by executing the `javadoc` gradle task:
 
     ./gradlew javadoc
