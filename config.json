@@ -4,6 +4,17 @@
     "connectionPoolSize": 10,
     "backends" : [
         {
+            "type": "io.sqp.postgresql.PostgreSQLBackend",
+            "config" : {
+                "host" : "localhost",
+                "port" : 5432,
+                "username" : "proxyuser",
+                "password" : "proxypw",
+                "serverCountry" : "de",
+                "serverLanguage" : "de"
+            }
+        },
+        {
             "comment": "Transbase Free via Pipe",
             "type": "io.sqp.transbase.TransbaseBackend",
             "config" : {
@@ -20,17 +31,6 @@
                 "kernelPort" : 2024,
                 "username" : "tbadmin",
                 "password" : ""
-            }
-        },
-        {
-            "type": "io.sqp.postgresql.PostgreSQLBackend",
-            "config" : {
-                "host" : "localhost",
-                "port" : 5432,
-                "username" : "proxyuser",
-                "password" : "proxypw",
-                "serverCountry" : "de",
-                "serverLanguage" : "de"
             }
         },
         {
