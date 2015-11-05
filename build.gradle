@@ -133,7 +133,7 @@ shadowJar {
     classifier = 'fat'
     manifest {
         attributes 'Main-Class': 'io.vertx.core.Starter'
-        attributes 'Main-Verticle': serverVerticle
+        attributes 'Main-Verticle': 'io.sqp.proxy.ServerVerticle' 
     }
     mergeServiceFiles {
         include 'META-INF/services/io.vertx.core.spi.VerticleFactory'
