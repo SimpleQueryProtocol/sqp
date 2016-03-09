@@ -32,7 +32,7 @@ plugins {
     id 'application'
 }
 
-def serverVerticle = 'ServerVerticle'
+def serverVerticle = 'io.sqp.proxy.ServerVerticle'
 def serverConfig = 'config.json'
 def transbaseJdbc = project.hasProperty('tbjdbc') ? project.getProperty('tbjdbc') : 'libs/tbjdbc.jar'
 def includeTransbase = new File(transbaseJdbc).exists()
@@ -133,7 +133,7 @@ shadowJar {
     classifier = 'fat'
     manifest {
         attributes 'Main-Class': 'io.vertx.core.Starter'
-        attributes 'Main-Verticle': 'io.sqp.proxy.ServerVerticle' 
+        attributes 'Main-Verticle': serverVerticle
     }
     mergeServiceFiles {
         include 'META-INF/services/io.vertx.core.spi.VerticleFactory'

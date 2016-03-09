@@ -32,12 +32,14 @@ public enum ClientSessionState {
     Dead(false, ErrorAction.Abort),
 
     Uninitialised(false, ErrorAction.Abort,
-            MessageType.HelloMessage),
+            MessageType.HelloMessage,
+            MessageType.CloseMessage),
 
     Connecting(true, ErrorAction.Abort),
 
     Authenticating(false, ErrorAction.Abort,
-            MessageType.AuthenticationResponseMessage),
+            MessageType.AuthenticationResponseMessage,
+            MessageType.CloseMessage),
 
     Ready(false, ErrorAction.Recover,
             MessageType.SimpleQueryMessage,
@@ -51,7 +53,8 @@ public enum ClientSessionState {
             MessageType.InformationRequestMessage,
             MessageType.TypeMappingMessage,
             MessageType.LobAnnouncementMessage,
-            MessageType.LobRequestMessage),
+            MessageType.LobRequestMessage,
+            MessageType.CloseMessage),
 
 // TODO: unify some of these states?
     SimpleExecuting(true, ErrorAction.Recover),

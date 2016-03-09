@@ -32,6 +32,7 @@ import io.sqp.core.types.SqpValue;
 import io.sqp.proxy.customtypes.CustomTypeMapper;
 import io.sqp.proxy.exceptions.*;
 import io.sqp.core.exceptions.SqpException;
+import io.sqp.core.messages.CloseMessage;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -115,10 +116,7 @@ public class ClientSession implements ErrorHandler {
 
     public void onClientClose() {
         logger.log(Level.INFO, "Client disconnected.");
-        // TODO: somehow pass something so the connection pool can tidy up the queue
-        _state = ClientSessionState.Closing;
-        _backendConnectionPool.closeConnection(_backendConnectionId);
-        _state = ClientSessionState.Dead;
+        processMessage(new CloseMessage());
     }
 
     public ClientSessionState getState() {
@@ -232,10 +230,21 @@ public class ClientSession implements ErrorHandler {
                 executeLobRequest(message.secureCast());
                 break;
 
+            case CloseMessage:
+                executeCloseConnection();
+                break;
+
             default:
                 throw new NotImplementedException("Message processing of type '"
                         + message.getType() + "' is not yet implemented");
         }
+    }
+
+    public void executeCloseConnection() {
+        // TODO: somehow pass something so the connection pool can tidy up the queue
+        _state = ClientSessionState.Closing;
+        _backendConnectionPool.closeConnection(_backendConnectionId);
+        _state = ClientSessionState.Dead;
     }
 
     private void executeLobRequest(LobRequestMessage lobRequest) {

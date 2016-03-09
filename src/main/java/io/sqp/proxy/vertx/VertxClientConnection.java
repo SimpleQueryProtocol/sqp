@@ -165,6 +165,13 @@ public class VertxClientConnection implements ClientConnection {
 
     public void handleClose(Void v) {
         // TODO: make the connectHandler settable
+        _wsSendQueueStream.pause();
+        // TODO: make sure stopping the pump doesn't cause trouble
+        // _wsSendingPump.stop();
+        if (_wsSendQueueStream.hasActiveStream()) {
+            logger.warning("Output to client was interrupted as the connection was closed."
+            + "However, there ist still data to be sent which gets discarded");
+        }
         _session.onClientClose();
     }
 

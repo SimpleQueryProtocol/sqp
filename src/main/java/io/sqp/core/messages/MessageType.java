@@ -27,6 +27,7 @@ import io.sqp.core.exceptions.DecodingException;
 public enum MessageType {
     DummyMessage('_', DummyMessage.class, true),
     ErrorMessage('!', ErrorMessage.class, true),
+    CloseMessage('.', CloseMessage.class, false),
     ReadyMessage('r', ReadyMessage.class, false),
 
     PrepareCompleteMessage('p', PrepareCompleteMessage.class, false),

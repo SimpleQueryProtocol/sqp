@@ -51,6 +51,10 @@ public class WebsocketSendQueueStream implements ReadStream<Buffer> {
         return this;
     }
 
+    public boolean hasActiveStream() {
+        return _currentStream != null || !_streamQueue.isEmpty();
+    }
+
     @Override
     public ReadStream<Buffer> exceptionHandler(Handler<Throwable> handler) {
         _exceptionHandler = handler;
